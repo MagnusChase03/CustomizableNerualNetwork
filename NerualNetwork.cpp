@@ -1,5 +1,6 @@
 #include "NerualNetwork.h"
 #include <ctime>
+#include <cmath>
 
 NerualNetwork::NerualNetwork(int numOfInputs, int numOfHiddenLayers, std::vector<int> nodesInHiddenLayer, int numOfOutputs) {
 
@@ -123,5 +124,105 @@ void NerualNetwork::init(int numOfInputs, int numOfHiddenLayers, std::vector<int
     }
 
     weights.push_back(weightSetBetweenLayer);
+
+    // set defualt activation function
+    activationFunctionType = "sigmoid";
+
+}
+
+double NerualNetwork::activationFunction(double x) {
+
+    // return sigmoid value
+    if (activationFunctionType == "sigmoid") {
+
+        return 1 / (1 + std::exp(-1 * x)); 
+
+    } else if (activationFunctionType == "tanh") {
+
+        return std::tanh(x);
+
+    }
+
+    return 0;
+
+}
+
+std::vector<double> NerualNetwork::think() {
+
+    // loop for every hidden layer
+    for (int i = 0; i < hiddenLayer.size(); i++) {
+
+        // do the math with inputs instead of a hidden layer if first set of connections
+        if (i == 0) {
+
+            for (int k = 0; k < hiddenLayer[i].size(); k++) {
+
+                double total = 0.0;
+                for (int l = 0; l < inputs.size(); l++) {
+
+                    total += inputs[l] * weights[i][l][k];
+
+                }
+
+                hiddenLayer[i][k] = activationFunction(total);
+
+            }
+
+        
+        // if it is between to hidden layers
+        } else {
+
+            for (int k = 0; k < hiddenLayer[i].size(); k++) {
+
+                double total = 0.0;
+                for (int l = 0; l < hiddenLayer[i - 1].size(); l++) {
+
+                    total += hiddenLayer[i - 1][l] * weights[i][l][k];
+
+                }
+
+                hiddenLayer[i][k] = activationFunction(total);
+
+            }
+
+        }
+
+    }
+
+    // if there was no hidden layer
+    if (hiddenLayer.size() == 0) {
+
+        for (int i = 0; i < outputs.size(); i++) {
+
+            double total = 0.0;
+            for (int k = 0; k < inputs.size(); k++) {
+
+                total += inputs[k] * weights[0][k][i];
+
+            }
+
+            outputs[i] = activationFunction(total);
+
+        }
+
+    // final connection between hidden layer and outputs
+    } else {
+
+        for (int i = 0; i < outputs.size(); i++) {
+
+            double total = 0.0;
+            for (int k = 0; k < hiddenLayer[hiddenLayer.size() - 1].size(); k++) {
+
+                total += hiddenLayer[hiddenLayer.size() - 1][k] * weights[weights.size() - 1][k][i];
+
+            }
+
+            outputs[i] = activationFunction(total);
+
+        }
+
+    }
+
+    return outputs;
 
 }
