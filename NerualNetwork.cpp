@@ -1,6 +1,7 @@
 #include "NerualNetwork.h"
 #include <ctime>
 #include <cmath>
+#include <fstream>
 
 NerualNetwork::NerualNetwork(int numOfInputs, int numOfHiddenLayers, std::vector<int> nodesInHiddenLayer, int numOfOutputs) {
 
@@ -137,6 +138,7 @@ double NerualNetwork::activationFunction(double x) {
 
         return 1 / (1 + std::exp(-1 * x)); 
 
+    // return tanh value
     } else if (activationFunctionType == "tanh") {
 
         return std::tanh(x);
@@ -224,5 +226,33 @@ std::vector<double> NerualNetwork::think() {
     }
 
     return outputs;
+
+}
+
+void NerualNetwork::saveData(std::string filepath) {
+
+    // open file for writing
+    std::ofstream file;
+    file.open(filepath);
+
+    // for every set of weights between layers
+    for (int i = 0; i < weights.size(); i++) {
+
+        // for every node that has weights
+        for (int k = 0; k < weights[i].size(); k++) {
+
+            // save the weights to the file
+            for (int l = 0; l < weights[i][k].size(); l++) {
+
+                file << weights[i][k][l] << std::endl;
+
+            }
+
+        }
+
+    }
+
+    // close file
+    file.close();
 
 }

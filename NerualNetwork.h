@@ -21,7 +21,7 @@ class NerualNetwork {
         void setInputs(std::vector<double> in) {inputs = in;};
         void setActivationFunctionType(std::string func) {activationFunctionType = func;}
         std::vector<double> think();
-        void saveWeights(std::string filepath);
+        void saveData(std::string filepath);
 
 };
 
