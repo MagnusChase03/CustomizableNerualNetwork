@@ -20,8 +20,10 @@ class NerualNetwork {
         NerualNetwork(int numOfInputs, int numOfHiddenLayers, std::vector<int> nodesInHiddenLayer, int numOfOutputs);
         void setInputs(std::vector<double> in) {inputs = in;};
         void setActivationFunctionType(std::string func) {activationFunctionType = func;}
+        std::vector<std::vector<std::vector<double>>> getWeights() {return weights;}
         std::vector<double> think();
         void saveData(std::string filepath);
+        void loadData(std::string filepath);
 
 };
 

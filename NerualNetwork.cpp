@@ -235,6 +235,19 @@ void NerualNetwork::saveData(std::string filepath) {
     std::ofstream file;
     file.open(filepath);
 
+    // save basic information about the nerual network
+    file << inputs.size() << std::endl;
+    file << hiddenLayer.size() << std::endl;
+
+    // looping over all hidden layers
+    for (int i = 0; i < hiddenLayer.size(); i++) {
+
+        file << hiddenLayer[i].size() << std::endl;
+
+    }
+
+    file << outputs.size() << std::endl;
+
     // for every set of weights between layers
     for (int i = 0; i < weights.size(); i++) {
 
@@ -245,6 +258,84 @@ void NerualNetwork::saveData(std::string filepath) {
             for (int l = 0; l < weights[i][k].size(); l++) {
 
                 file << weights[i][k][l] << std::endl;
+
+            }
+
+        }
+
+    }
+
+    // close file
+    file.close();
+
+}
+
+void NerualNetwork::loadData(std::string filepath) {
+
+    // open file for reading
+    std::ifstream file;
+    file.open(filepath);
+
+    // keep track of what line we are on
+    int lineNum = 0;
+    std::string line;
+
+    // basic information about nerual network
+    int numOfInputs;
+    int numOfHiddenLayers;
+    std::vector<int> numOfHiddenLayerNodes;
+    int numOfOutputs;
+
+    std::vector<double> weightsUnsorted;
+
+    // loop until we hit EOF
+    while (getline(file, line)) {
+
+        // first line is number of inputs
+        if (lineNum == 0) {
+
+            numOfInputs = stoi(line);
+
+        // second line is number of hidden layers
+        } else if (lineNum == 1) {
+
+            numOfHiddenLayers = stoi(line);
+
+        // third+ lines may be a hidden layer
+        } else if (lineNum < 2 + numOfHiddenLayers) {
+
+            numOfHiddenLayerNodes.push_back(stoi(line));
+
+        // output layer
+        } else if (lineNum == 2 + numOfHiddenLayers) {
+
+            numOfOutputs = stoi(line);
+
+        // else its just a weight
+        } else {
+
+            weightsUnsorted.push_back(stod(line));
+
+        }
+
+        lineNum++;
+
+    }
+
+    // keeps track of what weight we are on
+    int weightNum = 0;
+
+    // for every set of weights between layers
+    for (int i = 0; i < weights.size(); i++) {
+
+        // for every node that has weights
+        for (int k = 0; k < weights[i].size(); k++) {
+
+            // add the weight that was from the file
+            for (int l = 0; l < weights[i][k].size(); l++) {
+
+                weights[i][k][l] = weightsUnsorted[weightNum];
+                weightNum++;
 
             }
 
