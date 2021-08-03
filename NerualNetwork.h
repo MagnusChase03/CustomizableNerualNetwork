@@ -22,6 +22,7 @@ class NerualNetwork {
         void setActivationFunctionType(std::string func) {activationFunctionType = func;}
         std::vector<std::vector<std::vector<double>>> getWeights() {return weights;}
         std::vector<double> think();
+        void train(std::vector<std::vector<double>> inputs, std::vector<std::vector<double>> outputs, int times);
         void saveData(std::string filepath);
         void loadData(std::string filepath);
 

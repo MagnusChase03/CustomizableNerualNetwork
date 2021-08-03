@@ -229,6 +229,65 @@ std::vector<double> NerualNetwork::think() {
 
 }
 
+void NerualNetwork::train(std::vector<std::vector<double>> trainingInputs, 
+    std::vector<std::vector<double>> trainingOutputs, int times) {
+
+    for (int i = 0; i < times; i++) {
+
+        // looping over all datasets
+        for (int k = 0; k < trainingInputs.size(); k++) {
+
+            for (int l = 0; l < trainingInputs[k].size(); l++) {
+
+                inputs[l] = trainingInputs[k][l];
+
+            }
+
+            think();
+
+            // get the errors in output
+            std::vector<double> errors;
+            for (int l = 0; l < trainingOutputs[k].size(); l++) {
+
+                errors.push_back(trainingOutputs[k][l] - outputs[l]);
+
+            }
+
+            // adjust layers if there is at least one hidden layer
+            if (hiddenLayer.size() > 0) {
+
+                // adjust weights of last layer
+                for (int l = 0; l < trainingOutputs[k].size(); l++) {
+
+                    for (int j = 0; j < hiddenLayer[hiddenLayer.size() - 1].size(); j++) {
+
+                        weights[hiddenLayer.size()][j][l] += errors[l] * 0.1;
+
+                    }
+
+                }
+
+            } else {
+
+                // adjust weights of only layer
+                for (int l = 0; l < trainingOutputs[k].size(); l++) {
+
+                    for (int j = 0; j < trainingInputs[k].size(); j++) {
+
+                        weights[0][j][l] += errors[l] * 0.1;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+
 void NerualNetwork::saveData(std::string filepath) {
 
     // open file for writing
